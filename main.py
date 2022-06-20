@@ -32,9 +32,28 @@ class Shop(Screen):
         self.manager.current = 'main_menu'
  
 class Square:
-    def __init__(self):
+    def __init__(self,*lines):
         self.value = None
         self.button = Button() #потом попробуем покрасить
+        self.button.on_press = self.click
+ 
+        self.lines = lines
+        for line in lines:
+            line.append(self)
+ 
+    def click(self):
+        global player
+
+        if self.value is None:
+            self.value = player
+            self.button.text = player
+
+        if player == "X":
+            player = "O"
+        else:
+            player = "X"
+
+
  
 class GameScr(Screen):
     def __init__(self, name='game'):
@@ -43,7 +62,7 @@ class GameScr(Screen):
         up_layout = BoxLayout(orientation="horizontal")
         mid_layout = BoxLayout(orientation="horizontal")
         down_layout = BoxLayout(orientation="horizontal")
- 
+
         up = []
         mid = []
         down = []
@@ -53,49 +72,20 @@ class GameScr(Screen):
         diagonal1 = []
         diagonal2 = []
  
-        f = Square()
-        up.append(f)
-        left.append(f)
-        diagonal1.append(f)
+        #верхняя
+        Square(up,left,diagonal1)
+        Square(up,vertical_mid)
+        Square(up,right,diagonal2)
  
-        f = Square()
-        up.append(f)
-        vertical_mid.append(f)
+        #средний
+        Square(mid,left)
+        Square(mid,vertical_mid,diagonal1,diagonal2)
+        Square(mid,right)
  
-        f = Square()
-        up.append(f)
-        right.append(f)
-        diagonal2.append(f)
-        #верхнюю закончили
- 
-        f = Square()
-        down.append(f)
-        left.append(f)
-        diagonal2.append(f)
- 
-        f = Square()
-        down.append(f)
-        vertical_mid.append(f)
- 
-        f = Square()
-        down.append(f)
-        right.append(f)
-        diagonal1.append(f)
-        #нижний готово
- 
-        f = Square()
-        mid.append(f)
-        left.append(f)
- 
-        f = Square()
-        mid.append(f)
-        vertical_mid.append(f)
-        diagonal1.append(f)
-        diagonal2.append(f)
- 
-        f = Square()
-        mid.append(f)
-        right.append(f)
+        #нижний
+        Square(down,left,diagonal2)
+        Square(down,vertical_mid)
+        Square(down,right,diagonal1)
  
         for square in up:
             up_layout.add_widget(square.button)
@@ -118,5 +108,6 @@ class MyApp(App):
         sm.add_widget(Shop())
         return sm
  
+player = "X"
 app = MyApp()
 app.run()
