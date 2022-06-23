@@ -4,6 +4,7 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.image import Image
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.core.audio import SoundLoader
 
 Squares = []
 
@@ -63,10 +64,12 @@ class Square:
 
     def click(self):
         global player
+        global Squares
 
         if self.value is None:
             self.value = player
             self.win_check()
+            self.draw_check()
             if player == "X":
                 self.button.background_normal = "x.png"
                 player = "O"
@@ -85,6 +88,17 @@ class Square:
                 global sm, end_screen
                 end_screen.label.text = "победил " + player
                 sm.current = "end"
+
+    def draw_check(self):
+        k = 0
+        for square in Squares:
+            if square.value != None:
+                k += 1
+
+        if k == 9:
+            global sm, end_screen
+            end_screen.label.text = "Ничья!"
+            sm.current = "end"
 
 
 
@@ -141,7 +155,7 @@ class End_screen(Screen):
     def __init__(self, name='end'):
         super().__init__(name=name)
         background = Image(source="background.jpg", allow_stretch = True, keep_ratio = False)
-        self.label = Label(text = "QQ",size_hint = (0.3,0.2),pos_hint = {'center_x' : 0.5, 'center_y' : 0.7})
+        self.label = Label(text = "QQ",color = (0,0,0),size_hint = (0.3,0.2),pos_hint = {'center_x' : 0.5, 'center_y' : 0.7})
         start_btn = Button(text="Меню",size_hint = (0.3,0.2),pos_hint = {'center_x' : 0.5, 'center_y' : 0.5})
         start_btn.on_press = self.next_menu
         shop_btn = Button(text="Перезапуск",size_hint = (0.3,0.2),pos_hint = {'center_x' : 0.5, 'center_y' : 0.3})
